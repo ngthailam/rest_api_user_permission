@@ -33,12 +33,12 @@ export class RoleController {
     return this.roleService.remove(+id);
   }
 
-  @Post('/permission')
+  @Post('/permission/update')
   addPermission(@Body() updateRolePermissionDto: UpdateRolePermissionDto) {
     return this.roleService.addPermissions(updateRolePermissionDto)
   }
 
-  @Delete('/permission')
+  @Get('/permission/update')
   removePermission(@Body() updateRolePermissionDto: UpdateRolePermissionDto) {
     return this.roleService.removePermissions(updateRolePermissionDto)
   }

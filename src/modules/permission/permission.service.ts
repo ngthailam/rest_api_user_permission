@@ -22,7 +22,6 @@ export class PermissionService {
     let permission: Permission = new Permission()
     permission.code = createPermissionDto.code
     permission.description = createPermissionDto.description
-    console.log(permission)
     return this.permissionRepo.save(permission)
   }
 

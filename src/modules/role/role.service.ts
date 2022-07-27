@@ -102,9 +102,10 @@ export class RoleService {
     let role: Role = await this.findOne(updateRolePermissionDto.roleId)
 
     role.permissions = role.permissions.filter((rolePermission: Permission) => {
-      return role.permissions.find((rolePermissionInner) => {
-        return rolePermissionInner.id === rolePermission.id;
+      const isInDeletePermissionList = updateRolePermissionDto.permissionIds.find((rolePermissionIdInner) => {
+        return rolePermissionIdInner === rolePermission.id;
       })
+      return !isInDeletePermissionList
     })
 
     return this.roleRepo.save(role)

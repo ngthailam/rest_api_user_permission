@@ -2,10 +2,11 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { RoleService } from './role.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
+import { UpdateRolePermissionDto } from './dto/update-role-permission.dto';
 
 @Controller('roles')
 export class RoleController {
-  constructor(private readonly roleService: RoleService) {}
+  constructor(private readonly roleService: RoleService) { }
 
   @Post()
   create(@Body() createRoleDto: CreateRoleDto) {
@@ -18,17 +19,27 @@ export class RoleController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.roleService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
+  update(@Param('id') id: number, @Body() updateRoleDto: UpdateRoleDto) {
     return this.roleService.update(+id, updateRoleDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     return this.roleService.remove(+id);
+  }
+
+  @Post('/permission')
+  addPermission(@Body() updateRolePermissionDto: UpdateRolePermissionDto) {
+    return this.roleService.addPermissions(updateRolePermissionDto)
+  }
+
+  @Delete('/permission')
+  removePermission(@Body() updateRolePermissionDto: UpdateRolePermissionDto) {
+    return this.roleService.removePermissions(updateRolePermissionDto)
   }
 }

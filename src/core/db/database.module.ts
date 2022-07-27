@@ -17,9 +17,7 @@ import { Permission } from "src/modules/permission/entities/permission.entity";
                 username: configService.get('POSTGRES_USER'),
                 password: configService.get('POSTGRES_PASSWORD'),
                 database: configService.get('POSTGRES_DB'),
-                entities: [
-                    User, Permission
-                ],
+                autoLoadEntities: true,
                 synchronize: true,
             })
         })

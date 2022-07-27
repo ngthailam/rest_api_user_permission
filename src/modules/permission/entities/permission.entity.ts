@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
+import { Role } from "src/modules/role/entities/role.entity"
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm"
 
 const permTblName = 'permission'
 const permTblColId = 'id'
@@ -15,4 +16,7 @@ export class Permission {
 
     @Column({ name: permTblColDesc, default: '' })
     public description: string
+
+    @ManyToMany(() => Role, (role: Role) => role.permissions)
+    public roles: Role[]
 }

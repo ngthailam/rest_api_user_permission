@@ -14,8 +14,8 @@ export class PermissionService {
 
   }
 
-  create(createPermissionDto: CreatePermissionDto) {
-    let isPermissionExist = this.findByCode(createPermissionDto.code)
+  async create(createPermissionDto: CreatePermissionDto) {
+    let isPermissionExist = await this.permissionRepo.findOneBy({ code: createPermissionDto.code })
     if (isPermissionExist) {
       throw new HttpException(`Permission with code=${createPermissionDto.code} already exist`, HttpStatus.CONFLICT)
     }

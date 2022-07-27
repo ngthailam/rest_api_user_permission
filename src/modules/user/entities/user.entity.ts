@@ -6,13 +6,9 @@ const userTblColName = 'name'
 
 @Entity({ name: userTblName })
 export class User {
-    @PrimaryGeneratedColumn('uuid', {
-        name: userTblColId
-    })
+    @PrimaryGeneratedColumn('uuid', { name: userTblColId })
     public id: string
 
-    @Column({
-        name: userTblColName
-    })
+    @Column({ name: userTblColName })
     public name: string
 }

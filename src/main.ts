@@ -1,7 +1,8 @@
-import { BadRequestException, HttpException, InternalServerErrorException, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, InternalServerErrorException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { ValidationError } from 'class-validator/types/validation/ValidationError';
 import { AppModule } from './app.module';
+import { TypeOrmExceptionFilter } from './core/exception/typeorm.exception_filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,6 +19,8 @@ async function bootstrap() {
       return new BadRequestException(errorMsg);
     },
   }))
+  app.useGlobalFilters(new TypeOrmExceptionFilter());
+
   await app.listen(3000);
 }
 bootstrap();

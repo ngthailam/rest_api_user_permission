@@ -1,0 +1,67 @@
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
+import { CreatePermissionDto } from './dto/create-permission.dto';
+import { UpdatePermissionDto } from './dto/update-permission.dto';
+import { Permission } from './entities/permission.entity';
+
+@Injectable()
+export class PermissionService {
+  constructor(
+    @InjectRepository(Permission)
+    private readonly permissionRepo: Repository<Permission>
+  ) {
+
+  }
+
+  create(createPermissionDto: CreatePermissionDto) {
+    let isPermissionExist = this.findByCode(createPermissionDto.code)
+    if (isPermissionExist) {
+      throw new HttpException(`Permission with code=${createPermissionDto.code} already exist`, HttpStatus.CONFLICT)
+    }
+    let permission: Permission = new Permission()
+    permission.code = createPermissionDto.code
+    permission.description = createPermissionDto.description
+    console.log(permission)
+    return this.permissionRepo.save(permission)
+  }
+
+  findAll() {
+    return this.permissionRepo.find();
+  }
+
+  async findOne(id: number) {
+    let permission = await this.permissionRepo.findOneBy({ id: id })
+    if (permission == null) {
+      throw new HttpException(`Permission with id=${id} not found`, HttpStatus.NOT_FOUND);
+    }
+    return permission
+  }
+
+  async update(id: number, updatePermissionDto: UpdatePermissionDto) {
+    // Validate if permission with given id exist, if not this
+    // function throws a HttpException
+    await this.findOne(id)
+
+    // Actual update
+    return this.permissionRepo.update({
+      id: id,
+    }, {
+      code: updatePermissionDto.code,
+      description: updatePermissionDto.description
+    })
+  }
+
+  remove(id: number) {
+    // TODO: add check to remove success, fail to give proper response object
+    return this.permissionRepo.delete({ id: id });
+  }
+
+  async findByCode(code: string) {
+    let permission = await this.permissionRepo.findOneBy({ code: code })
+    if (permission == null) {
+      throw new HttpException(`Permission with code=${code} not found`, HttpStatus.NOT_FOUND);
+    }
+    return permission
+  }
+}

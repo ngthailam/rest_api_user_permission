@@ -13,14 +13,6 @@ export class UserService {
   ) { }
 
   create(createUserDto: CreateUserDto) {
-    let userWithName = this.userRepo.findOneBy({
-      name: createUserDto.name
-    })
-
-    if (userWithName != null) {
-      throw new HttpException('User name already exist', HttpStatus.CONFLICT)
-    }
-
     let user: User = new User()
     user.name = createUserDto.name
     return this.userRepo.save(user)

@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './core/db/database.module';
 import { UserModule } from './modules/user/user.module';
+import { PermissionModule } from './modules/permission/permission.module';
 
 @Module({
   imports: [
@@ -11,8 +12,9 @@ import { UserModule } from './modules/user/user.module';
       isGlobal: true,
       envFilePath: 'src/core/env/.db.dev.env'
     }),
-    UserModule, 
+    UserModule,
     DatabaseModule,
+    PermissionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

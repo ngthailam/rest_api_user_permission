@@ -5,14 +5,14 @@ import { CannotCreateEntityIdMapError, EntityNotFoundError, QueryFailedError, Ty
 
 @Catch()
 export class TypeOrmExceptionFilter implements ExceptionFilter {
-    catch(exception: unknown, host: ArgumentsHost) {
+    catch(exception: any, host: ArgumentsHost) {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse<Response>();
         const request = ctx.getRequest<Request>();
         let message = (exception as any).message.message;
 
         let status: number = HttpStatus.INTERNAL_SERVER_ERROR;
-
+        console.log(exception)
         switch (exception.constructor) {
             case QueryFailedError:
                 status = HttpStatus.UNPROCESSABLE_ENTITY
@@ -35,7 +35,14 @@ export class TypeOrmExceptionFilter implements ExceptionFilter {
                 message = (exception as HttpException).message;
                 break;
             default:
-                message = message || 'Unknown error'
+                if (exception.response) {
+                    response.status(exception.response.statusCode || status).json({
+                        'statusCode': exception.response.statusCode || status,
+                        'message': exception.response.message || 'Unknown Error'
+                    });
+                } else {
+                    message = 'Unknown error'
+                }
         }
 
         response.status(status).json({

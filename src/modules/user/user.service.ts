@@ -7,6 +7,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserRoleDto } from './dto/update-user-role.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -16,10 +17,19 @@ export class UserService {
     private readonly roleService: RoleService,
   ) { }
 
-  create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto) {
     let user: User = new User()
+    const salt: string = await bcrypt.genSalt();
+    const passwordHash: string = await bcrypt.hash(createUserDto.password, salt);
+
     user.name = createUserDto.name
-    return this.userRepo.save(user)
+    user.passwordSalt = salt
+    user.password = passwordHash
+    const savedUser = await this.userRepo.save(user)
+    return {
+      id: savedUser.id,
+      name: savedUser.name
+    }
   }
 
   findAll() {
@@ -37,10 +47,22 @@ export class UserService {
     return user
   }
 
+  async findByName(userName: string) {
+    let user = await this.userRepo.findOne({
+      where: { name: userName },
+      relations: ['roles']
+    })
+    if (user == null) {
+      throw new HttpException(`User with name=${userName} not found`, HttpStatus.NOT_FOUND);
+    }
+    return user
+  }
+
+  // Does not include resetting password
   async update(id: string, updateUserDto: UpdateUserDto) {
     // Validate if user with given id exist, if not this
     // function throws a HttpException
-    await this.findOne(id)
+    const user: User = await this.findOne(id)
 
     // Actual update
     return this.userRepo.update({

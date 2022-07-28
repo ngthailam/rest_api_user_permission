@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Role } from "src/modules/role/entities/role.entity";
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
 const userTblName = 'app_user'
 const userTblColId = 'id'
@@ -11,4 +12,8 @@ export class User {
 
     @Column({ name: userTblColName })
     public name: string
+
+    @ManyToMany(() => Role, (role: Role) => role.users)
+    @JoinTable()
+    public roles: Role[]
 }

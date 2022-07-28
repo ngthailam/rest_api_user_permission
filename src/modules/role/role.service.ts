@@ -99,11 +99,11 @@ export class RoleService {
 
   // TODO: needs to add to a transaction instead
   async removePermissions(updateRolePermissionDto: UpdateRolePermissionDto) {
-    let role: Role = await this.findOne(updateRolePermissionDto.roleId)
+    const role: Role = await this.findOne(updateRolePermissionDto.roleId)
 
     role.permissions = role.permissions.filter((rolePermission: Permission) => {
-      const isInDeletePermissionList = updateRolePermissionDto.permissionIds.find((rolePermissionIdInner) => {
-        return rolePermissionIdInner === rolePermission.id;
+      const isInDeletePermissionList = updateRolePermissionDto.permissionIds.find((permissionIdInner) => {
+        return permissionIdInner === rolePermission.id;
       })
       return !isInDeletePermissionList
     })

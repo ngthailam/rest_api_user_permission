@@ -7,6 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { RefreshTokenModule } from '../refresh-token/refresh-token.module';
+import { RoleModule } from '../role/role.module';
 
 @Module({
   imports: [
@@ -14,9 +15,10 @@ import { RefreshTokenModule } from '../refresh-token/refresh-token.module';
     PassportModule,
     JwtModule.register({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '120s' },
+      signOptions: { expiresIn: '300s' },
     }), 
     RefreshTokenModule,
+    RoleModule
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy]

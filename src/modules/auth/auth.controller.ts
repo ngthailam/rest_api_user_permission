@@ -6,6 +6,8 @@ import { JwtAuthGuard } from './guard/jwt.guard';
 import { LogoutUserDto } from './dto/logout-user.dto';
 import { RefreshAccessTokenDto } from '../refresh-token/dto/refresh-access-token.dto';
 import { Public } from './constants';
+import { RoleGuard } from './guard/role.guard';
+import { Role } from '../role/constants';
 
 @Controller('auth')
 export class AuthController {
@@ -29,7 +31,8 @@ export class AuthController {
     return this.authService.refreshAccessToken(refreshAccessTokenDto)
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(RoleGuard)
+  @Role(['super'])
   @Get('test')
   getProfile() {
     return "success";

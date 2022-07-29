@@ -1,5 +1,6 @@
+import { RefreshToken } from "src/modules/refresh-token/entities/refresh-token.entity";
 import { Role } from "src/modules/role/entities/role.entity";
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 const userTblName = 'app_user'
 const userTblColId = 'id'
@@ -15,9 +16,6 @@ export class User {
     @Column({ name: userTblColName, unique: true, nullable: false })
     public name: string
 
-    @Column({ name: userTblColPasswordSalt })
-    public passwordSalt: string
-
     // in hash form
     @Column({ name: userTblColPassword })
     public password: string
@@ -25,4 +23,7 @@ export class User {
     @ManyToMany(() => Role, (role: Role) => role.users)
     @JoinTable()
     public roles: Role[]
+
+    @ManyToOne(() => RefreshToken, (refreshToken: RefreshToken) => refreshToken.user)
+    public refreshTokens: RefreshToken[]
 }

@@ -23,7 +23,6 @@ export class UserService {
     const passwordHash: string = await bcrypt.hash(createUserDto.password, salt);
 
     user.name = createUserDto.name
-    user.passwordSalt = salt
     user.password = passwordHash
     const savedUser = await this.userRepo.save(user)
     return {

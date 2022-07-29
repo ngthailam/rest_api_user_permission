@@ -40,6 +40,7 @@ export class TypeOrmExceptionFilter implements ExceptionFilter {
                         'statusCode': exception.response.statusCode || status,
                         'message': exception.response.message || 'Unknown Error'
                     });
+                    return
                 } else {
                     message = 'Unknown error'
                 }
@@ -49,5 +50,6 @@ export class TypeOrmExceptionFilter implements ExceptionFilter {
             'statusCode': status,
             'message': message,
         });
+        return
     }
 }

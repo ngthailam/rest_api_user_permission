@@ -9,6 +9,8 @@ import { RoleModule } from './modules/role/role.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './modules/auth/auth.module';
 import { RefreshTokenModule } from './modules/refresh-token/refresh-token.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './modules/auth/guard/jwt.guard';
 
 @Module({
   imports: [
@@ -28,6 +30,12 @@ import { RefreshTokenModule } from './modules/refresh-token/refresh-token.module
     RefreshTokenModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule { }

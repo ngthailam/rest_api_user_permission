@@ -1,11 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateUserRoleDto } from './dto/update-user-role.dto';
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) { }
+  constructor(private readonly userService: UserService) {}
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
@@ -34,11 +42,11 @@ export class UserController {
 
   @Post('roles/update')
   addRole(@Body() updateRoleDto: UpdateUserRoleDto) {
-    return this.userService.addRole(updateRoleDto)
+    return this.userService.addRole(updateRoleDto);
   }
 
   @Delete('roles/update')
   removeRole(@Body() updateRoleDto: UpdateUserRoleDto) {
-    return this.userService.removeRole(updateRoleDto)
+    return this.userService.removeRole(updateRoleDto);
   }
 }

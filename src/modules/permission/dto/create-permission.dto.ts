@@ -1,11 +1,11 @@
-import { IsNotEmpty, IsOptional, IsString } from "class-validator"
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreatePermissionDto {
-    @IsString()
-    @IsNotEmpty()
-    public code: string
+  @IsString()
+  @IsNotEmpty()
+  public code: string;
 
-    @IsString()
-    @IsOptional()
-    public description: string
+  @IsString()
+  @IsOptional()
+  public description: string;
 }

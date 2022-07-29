@@ -7,6 +7,6 @@ import { RefreshTokenService } from './refresh-token.service';
   imports: [TypeOrmModule.forFeature([RefreshToken])],
   controllers: [],
   providers: [RefreshTokenService],
-  exports: [RefreshTokenService]
+  exports: [RefreshTokenService],
 })
-export class RefreshTokenModule { }
+export class RefreshTokenModule {}

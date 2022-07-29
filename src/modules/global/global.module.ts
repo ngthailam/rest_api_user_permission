@@ -4,7 +4,7 @@ import { RoleService } from '../role/role.service';
 
 @Global()
 @Module({
-    providers: [RoleService],
-    exports: [RoleService]
+  providers: [RoleService],
+  exports: [RoleService],
 })
-export class GlobalModule { }
+export class GlobalModule {}

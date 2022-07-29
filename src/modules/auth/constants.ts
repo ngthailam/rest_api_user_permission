@@ -1,7 +1,7 @@
-import { SetMetadata } from "@nestjs/common";
+import { SetMetadata } from '@nestjs/common';
 
 export const jwtConstants = {
-    secret: 'g4CijKVq08',
+  secret: 'g4CijKVq08',
 };
 
 //Public APIs will bypass JWTGuard checks

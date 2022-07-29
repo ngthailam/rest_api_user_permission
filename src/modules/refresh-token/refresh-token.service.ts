@@ -8,48 +8,47 @@ import { User } from '../user/entities/user.entity';
 
 @Injectable()
 export class RefreshTokenService {
+  constructor(
+    @InjectRepository(RefreshToken)
+    private readonly refreshTokenRepo: Repository<RefreshToken>,
+  ) {}
 
-    constructor(
-        @InjectRepository(RefreshToken)
-        private readonly refreshTokenRepo: Repository<RefreshToken>
-    ) { }
+  async create(userId: string) {
+    const refreshToken: RefreshToken = new RefreshToken();
 
-    async create(userId: string) {
-        let refreshToken: RefreshToken = new RefreshToken()
+    const rawToken: string = crypto.randomBytes(32).toString('hex');
+    const salt: string = await bcrypt.genSalt();
+    const hashedToken: string = await bcrypt.hash(rawToken, salt);
 
-        const rawToken: string = crypto.randomBytes(32).toString('hex')
-        const salt: string = await bcrypt.genSalt();
-        const hashedToken: string = await bcrypt.hash(rawToken, salt)
+    refreshToken.hashedToken = hashedToken;
+    refreshToken.createdAt = Date.now().toString();
+    const user = new User();
+    user.id = userId;
+    refreshToken.user = user;
 
-        refreshToken.hashedToken = hashedToken
-        refreshToken.createdAt = Date.now().toString()
-        let user = new User()
-        user.id = userId
-        refreshToken.user = user
+    return {
+      hashedToken: this.refreshTokenRepo.save(refreshToken),
+      rawToken: rawToken,
+    };
+  }
 
-        return {
-            hashedToken: this.refreshTokenRepo.save(refreshToken),
-            rawToken: rawToken
-        }
-    }
+  remove(id: number) {
+    return this.refreshTokenRepo.delete({ id: id });
+  }
 
-    remove(id: number) {
-        return this.refreshTokenRepo.delete({ id: id })
-    }
+  async removeByUserId(userId: string) {
+    const user = new User();
+    user.id = userId;
+    return this.refreshTokenRepo.delete({ user: user });
+  }
 
-    async removeByUserId(userId: string) {
-        let user = new User()
-        user.id = userId
-        return this.refreshTokenRepo.delete({ user: user })
-    }
+  findOne(id: number) {
+    return this.refreshTokenRepo.findOneBy({ id: id });
+  }
 
-    findOne(id: number) {
-        return this.refreshTokenRepo.findOneBy({ id: id })
-    }
-
-    findOneByUserId(userId: string) {
-        let user = new User()
-        user.id = userId
-        return this.refreshTokenRepo.findOneBy({ user: user })
-    }
+  findOneByUserId(userId: string) {
+    const user = new User();
+    user.id = userId;
+    return this.refreshTokenRepo.findOneBy({ user: user });
+  }
 }

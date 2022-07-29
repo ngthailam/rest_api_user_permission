@@ -11,14 +11,13 @@ import { AuthModule } from './modules/auth/auth.module';
 import { RefreshTokenModule } from './modules/refresh-token/refresh-token.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './modules/auth/guard/jwt.guard';
-import { RoleGuard } from './modules/auth/guard/role.guard';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: 'src/core/env/.db.dev.env'
+      envFilePath: 'src/core/env/.db.dev.env',
     }),
     ThrottlerModule.forRoot({
       ttl: 60,
@@ -37,7 +36,7 @@ import { JwtModule } from '@nestjs/jwt';
     AppService,
     {
       provide: APP_GUARD,
-      useClass: JwtAuthGuard
+      useClass: JwtAuthGuard,
     },
     // {
     //   provide: APP_GUARD,
@@ -45,4 +44,4 @@ import { JwtModule } from '@nestjs/jwt';
     // }
   ],
 })
-export class AppModule { }
+export class AppModule {}

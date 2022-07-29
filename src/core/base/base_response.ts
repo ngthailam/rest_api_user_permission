@@ -1,10 +1,10 @@
-import { BaseError } from "./base_error"
+import { BaseError } from './base_error';
 
 // TODO: Use this as a wrapper for all responses
 export class BaseResponse {
-    public data: any
+  public data: any;
 
-    public statusCode: number
+  public statusCode: number;
 
-    public error: BaseError
+  public error: BaseError;
 }

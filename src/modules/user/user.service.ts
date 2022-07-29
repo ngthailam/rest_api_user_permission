@@ -15,100 +15,114 @@ export class UserService {
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
     private readonly roleService: RoleService,
-  ) { }
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
-    let user: User = new User()
+    const user: User = new User();
     const salt: string = await bcrypt.genSalt();
-    const passwordHash: string = await bcrypt.hash(createUserDto.password, salt);
+    const passwordHash: string = await bcrypt.hash(
+      createUserDto.password,
+      salt,
+    );
 
-    user.name = createUserDto.name
-    user.password = passwordHash
-    const savedUser = await this.userRepo.save(user)
+    user.name = createUserDto.name;
+    user.password = passwordHash;
+    const savedUser = await this.userRepo.save(user);
     return {
       id: savedUser.id,
-      name: savedUser.name
-    }
+      name: savedUser.name,
+    };
   }
 
   findAll() {
-    return this.userRepo.find()
+    return this.userRepo.find();
   }
 
   async findOne(id: string) {
-    let user = await this.userRepo.findOne({
+    const user = await this.userRepo.findOne({
       where: { id: id },
-      relations: ['roles']
-    })
+      relations: ['roles'],
+    });
     if (user == null) {
-      throw new HttpException(`User with id=${id} not found`, HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        `User with id=${id} not found`,
+        HttpStatus.NOT_FOUND,
+      );
     }
-    return user
+    return user;
   }
 
   async findByName(userName: string) {
-    let user = await this.userRepo.findOne({
+    const user = await this.userRepo.findOne({
       where: { name: userName },
-      relations: ['roles']
-    })
+      relations: ['roles'],
+    });
     if (user == null) {
-      throw new HttpException(`User with name=${userName} not found`, HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        `User with name=${userName} not found`,
+        HttpStatus.NOT_FOUND,
+      );
     }
-    return user
+    return user;
   }
 
   // Does not include resetting password
   async update(id: string, updateUserDto: UpdateUserDto) {
     // Validate if user with given id exist, if not this
     // function throws a HttpException
-    const user: User = await this.findOne(id)
+    await this.findOne(id);
 
     // Actual update
-    return this.userRepo.update({
-      id: id,
-    }, {
-      name: updateUserDto.name
-    })
+    return this.userRepo.update(
+      {
+        id: id,
+      },
+      {
+        name: updateUserDto.name,
+      },
+    );
   }
 
   remove(id: string) {
-    return this.userRepo.delete({ id: id })
+    return this.userRepo.delete({ id: id });
   }
 
   async addRole(updateRoleDto: UpdateUserRoleDto) {
-    let user: User = await this.findOne(updateRoleDto.userId)
-    let roleIdsToAdd: number[] = []
+    const user: User = await this.findOne(updateRoleDto.userId);
+    const roleIdsToAdd: number[] = [];
 
-    updateRoleDto.roleIds.forEach(roleId => {
-      const isAlreadyHasRole = user.roles.some(userRole => {
-        return userRole.id == roleId
-      })
+    updateRoleDto.roleIds.forEach((roleId) => {
+      const isAlreadyHasRole = user.roles.some((userRole) => {
+        return userRole.id == roleId;
+      });
       if (!isAlreadyHasRole) {
-        roleIdsToAdd.push(roleId)
+        roleIdsToAdd.push(roleId);
       }
     });
 
-    let newRoles: Role[] = []
+    const newRoles: Role[] = [];
 
     for (const roleId of roleIdsToAdd) {
-      const role = await this.roleService.findOne(roleId)
-      newRoles.push(role)
+      const role = await this.roleService.findOne(roleId);
+      newRoles.push(role);
     }
 
-    user.roles = [...newRoles, ...user.roles]
-    return this.userRepo.save(user)
+    user.roles = [...newRoles, ...user.roles];
+    return this.userRepo.save(user);
   }
 
   async removeRole(updateRoleDto: UpdateUserRoleDto) {
-    const user: User = await this.findOne(updateRoleDto.userId)
+    const user: User = await this.findOne(updateRoleDto.userId);
 
     user.roles = user.roles.filter((userRole: Role) => {
-      const isInDeletePermissionList = updateRoleDto.roleIds.find((roleIdInner) => {
-        return roleIdInner === userRole.id;
-      })
-      return !isInDeletePermissionList
-    })
+      const isInDeletePermissionList = updateRoleDto.roleIds.find(
+        (roleIdInner) => {
+          return roleIdInner === userRole.id;
+        },
+      );
+      return !isInDeletePermissionList;
+    });
 
-    return this.userRepo.save(user)
+    return this.userRepo.save(user);
   }
 }

@@ -16,11 +16,11 @@ import { RoleModule } from '../role/role.module';
     JwtModule.register({
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '300s' },
-    }), 
+    }),
     RefreshTokenModule,
-    RoleModule
+    RoleModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy]
+  providers: [AuthService, JwtStrategy],
 })
 export class AuthModule {}

@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { RoleService } from './role.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
@@ -6,7 +14,7 @@ import { UpdateRolePermissionDto } from './dto/update-role-permission.dto';
 
 @Controller('roles')
 export class RoleController {
-  constructor(private readonly roleService: RoleService) { }
+  constructor(private readonly roleService: RoleService) {}
 
   @Post()
   create(@Body() createRoleDto: CreateRoleDto) {
@@ -35,11 +43,11 @@ export class RoleController {
 
   @Post('/permission/update')
   addPermission(@Body() updateRolePermissionDto: UpdateRolePermissionDto) {
-    return this.roleService.addPermissions(updateRolePermissionDto)
+    return this.roleService.addPermissions(updateRolePermissionDto);
   }
 
   @Get('/permission/update')
   removePermission(@Body() updateRolePermissionDto: UpdateRolePermissionDto) {
-    return this.roleService.removePermissions(updateRolePermissionDto)
+    return this.roleService.removePermissions(updateRolePermissionDto);
   }
 }

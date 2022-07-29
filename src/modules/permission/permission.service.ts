@@ -9,20 +9,23 @@ import { Permission } from './entities/permission.entity';
 export class PermissionService {
   constructor(
     @InjectRepository(Permission)
-    private readonly permissionRepo: Repository<Permission>
-  ) {
-
-  }
+    private readonly permissionRepo: Repository<Permission>,
+  ) {}
 
   async create(createPermissionDto: CreatePermissionDto) {
-    let isPermissionExist = await this.permissionRepo.findOneBy({ code: createPermissionDto.code })
+    const isPermissionExist = await this.permissionRepo.findOneBy({
+      code: createPermissionDto.code,
+    });
     if (isPermissionExist) {
-      throw new HttpException(`Permission with code=${createPermissionDto.code} already exist`, HttpStatus.CONFLICT)
+      throw new HttpException(
+        `Permission with code=${createPermissionDto.code} already exist`,
+        HttpStatus.CONFLICT,
+      );
     }
-    let permission: Permission = new Permission()
-    permission.code = createPermissionDto.code
-    permission.description = createPermissionDto.description
-    return this.permissionRepo.save(permission)
+    const permission: Permission = new Permission();
+    permission.code = createPermissionDto.code;
+    permission.description = createPermissionDto.description;
+    return this.permissionRepo.save(permission);
   }
 
   findAll() {
@@ -30,25 +33,31 @@ export class PermissionService {
   }
 
   async findOne(id: number) {
-    let permission = await this.permissionRepo.findOneBy({ id: id })
+    const permission = await this.permissionRepo.findOneBy({ id: id });
     if (permission == null) {
-      throw new HttpException(`Permission with id=${id} not found`, HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        `Permission with id=${id} not found`,
+        HttpStatus.NOT_FOUND,
+      );
     }
-    return permission
+    return permission;
   }
 
   async update(id: number, updatePermissionDto: UpdatePermissionDto) {
     // Validate if permission with given id exist, if not this
     // function throws a HttpException
-    await this.findOne(id)
+    await this.findOne(id);
 
     // Actual update
-    return this.permissionRepo.update({
-      id: id,
-    }, {
-      code: updatePermissionDto.code,
-      description: updatePermissionDto.description
-    })
+    return this.permissionRepo.update(
+      {
+        id: id,
+      },
+      {
+        code: updatePermissionDto.code,
+        description: updatePermissionDto.description,
+      },
+    );
   }
 
   remove(id: number) {
@@ -57,10 +66,13 @@ export class PermissionService {
   }
 
   async findByCode(code: string) {
-    let permission = await this.permissionRepo.findOneBy({ code: code })
+    const permission = await this.permissionRepo.findOneBy({ code: code });
     if (permission == null) {
-      throw new HttpException(`Permission with code=${code} not found`, HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        `Permission with code=${code} not found`,
+        HttpStatus.NOT_FOUND,
+      );
     }
-    return permission
+    return permission;
   }
 }

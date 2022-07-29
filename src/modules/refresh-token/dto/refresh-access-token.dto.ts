@@ -1,12 +1,12 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class RefreshAccessTokenDto {
-    @IsNotEmpty()
-    @IsString()
-    public refreshToken: string
+  @IsNotEmpty()
+  @IsString()
+  public refreshToken: string;
 
-    // TODO: maybe fetched from header
-    @IsNotEmpty()
-    @IsString()
-    public userId: string
+  // TODO: maybe fetched from header
+  @IsNotEmpty()
+  @IsString()
+  public userId: string;
 }

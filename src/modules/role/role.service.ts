@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, Response } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Permission } from '../permission/entities/permission.entity';
@@ -14,17 +14,22 @@ export class RoleService {
     @InjectRepository(Role)
     private readonly roleRepo: Repository<Role>,
     private permissionService: PermissionService,
-  ) { }
+  ) {}
 
   async create(createRoleDto: CreateRoleDto) {
-    let isRoleExist = await this.roleRepo.findOneBy({ name: createRoleDto.name })
+    const isRoleExist = await this.roleRepo.findOneBy({
+      name: createRoleDto.name,
+    });
     if (isRoleExist) {
-      throw new HttpException(`Role with name=${createRoleDto.name} already exist`, HttpStatus.CONFLICT)
+      throw new HttpException(
+        `Role with name=${createRoleDto.name} already exist`,
+        HttpStatus.CONFLICT,
+      );
     }
-    let role: Role = new Role()
-    role.name = createRoleDto.name
-    role.description = createRoleDto.description
-    return this.roleRepo.save(role)
+    const role: Role = new Role();
+    role.name = createRoleDto.name;
+    role.description = createRoleDto.description;
+    return this.roleRepo.save(role);
   }
 
   findAll() {
@@ -32,83 +37,93 @@ export class RoleService {
   }
 
   async findOne(id: number) {
-    let role = await this.roleRepo.findOne({
+    const role = await this.roleRepo.findOne({
       where: {
-        id: id
+        id: id,
       },
-      relations: ['permissions']
-    })
+      relations: ['permissions'],
+    });
     if (role == null) {
-      throw new HttpException(`Role with id=${id} not found`, HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        `Role with id=${id} not found`,
+        HttpStatus.NOT_FOUND,
+      );
     }
-    return role
+    return role;
   }
 
   async findByName(name: string) {
-    let role = await this.roleRepo.findOne({
+    const role = await this.roleRepo.findOne({
       where: {
-        name: name
+        name: name,
       },
-      relations: ['permissions']
-    })
+      relations: ['permissions'],
+    });
     if (role == null) {
-      throw new HttpException(`Permission with name=${name} not found`, HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        `Permission with name=${name} not found`,
+        HttpStatus.NOT_FOUND,
+      );
     }
-    return role
+    return role;
   }
 
   async update(id: number, updateRoleDto: UpdateRoleDto) {
     // Validate if role with given id exist, if not this
     // function throws a HttpException
-    await this.findOne(id)
+    await this.findOne(id);
 
     // Actual update
-    return this.roleRepo.update({
-      id: id,
-    }, {
-      name: updateRoleDto.name,
-      description: updateRoleDto.description
-    })
+    return this.roleRepo.update(
+      {
+        id: id,
+      },
+      {
+        name: updateRoleDto.name,
+        description: updateRoleDto.description,
+      },
+    );
   }
 
   // TODO: needs to add to a transaction instead
   // TODO: logic to complicated for just a simple task, refactor this
   async addPermissions(updateRolePermissionDto: UpdateRolePermissionDto) {
-    let role: Role = await this.findOne(updateRolePermissionDto.roleId)
-    let permissionIdsToAdd: number[] = []
+    const role: Role = await this.findOne(updateRolePermissionDto.roleId);
+    const permissionIdsToAdd: number[] = [];
 
-    updateRolePermissionDto.permissionIds.forEach(permissionId => {
-      const isAlreadyHasPermission = role.permissions.some(rolePermission => {
-        return rolePermission.id == permissionId
-      })
+    updateRolePermissionDto.permissionIds.forEach((permissionId) => {
+      const isAlreadyHasPermission = role.permissions.some((rolePermission) => {
+        return rolePermission.id == permissionId;
+      });
       if (!isAlreadyHasPermission) {
-        permissionIdsToAdd.push(permissionId)
+        permissionIdsToAdd.push(permissionId);
       }
     });
 
-    let newPermissions: Permission[] = []
+    const newPermissions: Permission[] = [];
 
     for (const permissionId of permissionIdsToAdd) {
-      const permission = await this.permissionService.findOne(permissionId)
-      newPermissions.push(permission)
+      const permission = await this.permissionService.findOne(permissionId);
+      newPermissions.push(permission);
     }
 
-    role.permissions = [...newPermissions, ...role.permissions]
-    return this.roleRepo.save(role)
+    role.permissions = [...newPermissions, ...role.permissions];
+    return this.roleRepo.save(role);
   }
 
   // TODO: needs to add to a transaction instead
   async removePermissions(updateRolePermissionDto: UpdateRolePermissionDto) {
-    const role: Role = await this.findOne(updateRolePermissionDto.roleId)
+    const role: Role = await this.findOne(updateRolePermissionDto.roleId);
 
     role.permissions = role.permissions.filter((rolePermission: Permission) => {
-      const isInDeletePermissionList = updateRolePermissionDto.permissionIds.find((permissionIdInner) => {
-        return permissionIdInner === rolePermission.id;
-      })
-      return !isInDeletePermissionList
-    })
+      const isInDeletePermissionList =
+        updateRolePermissionDto.permissionIds.find((permissionIdInner) => {
+          return permissionIdInner === rolePermission.id;
+        });
+      return !isInDeletePermissionList;
+    });
 
-    return this.roleRepo.save(role)
+    return this.roleRepo.save(role);
   }
 
   remove(id: number) {
